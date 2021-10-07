@@ -1,6 +1,6 @@
 {
   "name": "svelte-proxied-store",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "description": "svelte store using Proxy to allow powerful fine-tuning.",
   "repository": "gitlab:clb1/svelte-proxied-store",
