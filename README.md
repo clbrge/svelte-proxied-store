@@ -1,17 +1,31 @@
 
 # svelte-proxied-store
 
-A fork of svelte-store using JavaScript Proxy internally. Using a Proxy Object allows
-powerful use cases of stores.
+A fork of svelte-store that specialize in handling Javascript Object.
 
-A proxied Store implement the `subscribe` method, so is fully
+A proxied Store implement the `subscribe` method that is fully
 compatible with the original Svelte store (in particular, the auto
 subscriptions using the `$` notation in Svelte files).
+
+There are a few differences:
+
+1. The store are writable but not using the classic `set` or `update`
+functions. Instead, you can update properties' value of the stored
+Object using `assign` (works like `Object.assign`).
+
+2. Subscribers only receive new values when you explicitely call
+`emit`, not automatically after `assign`.
+
+3. The store use [JavaScript
+Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+internally and you can pass a custom handler to intercept and redefine
+fundamental operations for the stored Object. This allow some powerful
+magic (examples below).
 
 
 ## Installation
 
-1. add the `svelte-proxied-store` package
+Add the `svelte-proxied-store` package
 
 ```bash
 npm i svelte-proxied-store
@@ -20,7 +34,8 @@ npm i svelte-proxied-store
 ### Simple Usage
 
 
-1. Import and declare like a normal Svelte store.
+Import and declare like a normal Svelte store except that you cannot
+initialize with a value, it's always an empty JavaScript Object.
 
 ```js
 const { proxied } = require ('svelte-proxied-store')
@@ -28,33 +43,43 @@ const { proxied } = require ('svelte-proxied-store')
 const myStore = proxied()
 ```
 
-A proxied store implement 5 methods `refresh`, `set`, `get`, `assign`, `subscribe`, but only 
-`subscribe` is equivalent to standard svelte store.
+A proxied store implement 6 methods `subscribe`, `assign`, `emit`,
+`get`, `delete` and `deleteAll`. Only is strictly equivalent to
+standard svelte store.
 
-
-2. The internally stored value can only be an Object. You can
-initiatize its properties individually with `set` or many properties
-using `assign` :
+The stored Object properties can be assigned new values using `assign` :
 
 ```js
-myStore.set('propertyKey', value)
-
 myStore.assign({
-     property1: 'abc',
-     property2: 'xyz',
+  property1: 'abc',
+  property2: 'xyz',
 })
 ```
 
-3. Contrary to normal Svelte store, notification of changes to
-subscribers doesn't happen automatically when you `set` or `assign`
-new properties. You need to explicitely use `refresh` to broadcast
-your changes :
+You may delete a property from the stored Object using `delete` :
 
 ```js
-myStore.refresh()
+myStore.delete('propertyName')
 ```
 
-4. Finally, you can access at any time the internal value of any property in the store:
+Or remove all properties using `deleteAll` :
+
+```js
+myStore.deleteAll()
+```
+
+Contrary to normal Svelte store, notification of changes to
+subscribers doesn't happen automatically when you `assign` new
+property values. You need to explicitely use `emit` to broadcast your
+changes to subscribers:
+
+```js
+myStore.emit()
+```
+
+4. Finally, you can access at any time the internal value of any
+property of the stored Object (it won't be handled by the Proxy
+Hanlder, contrary to `$myStore.propertyKey`)
 
 ```js
 myStore.get('propertyKey')
@@ -62,7 +87,7 @@ myStore.get('propertyKey')
 
 ### Advanced Usage
 
-You declare a store using a custom Proxy handler to allow advanced usage
+You declare a store using a custom Proxy handler to allow advanced usage :
 
 ```js
 const { proxied } = require ('svelte-proxied-store')
@@ -76,10 +101,13 @@ const handler =
 const myStore = proxied(handler)
 ```
 
-Here the `get` function will intercept any call from subscribers to
-get an internal value property. An opportunity to implement any logic
-you like before sending back the internal value (of any other value
-preferable).
+The handler above will intercept any `get` call from subscribers
+(including when you use the notation `$myStore.propertyKey`).
+
+This is opportunity to implement any logic you like before sending
+back the internal value (of any other value preferable).
+
+
 
 
 

@@ -2,23 +2,34 @@
   "name": "svelte-proxied-store",
   "version": "0.0.3",
   "license": "MIT",
-  "description": "svelte store using Proxy to allow powerful fine-tuning.",
+  "description": "svelte store for Object using Proxy to allow cybernetically enhanced magic.",
   "repository": "gitlab:clb1/svelte-proxied-store",
   "author": {
     "name": "Christophe Le Bars",
     "email": "<clb@toort.net>"
   },
-  "main": "src/store.js",
+  "main": "dist/store.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist",
+    "lint": "prettier-standard --lint 'src/**/*.js'",
+    "test": "mocha --require @babel/register",
+    "build": "npm run clean && mkdir -p dist && babel src -s -D -d dist"
   },
   "keywords": [
     "svelte",
     "store"
   ],
   "devDependencies": {
-    "release-it": "^14.11.6",
-    "standard": "^16.0.4"
+    "@babel/cli": "^7.15.7",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/register": "^7.15.3",
+    "assert": "^2.0.0",
+    "mocha": "^9.1.2",
+    "prettier-standard": "^16.4.1",
+    "release-it": "^14.11.6"
+  },
+  "lint-staged": {
+    "*": ["prettier-standard --lint"]
   },
   "publishConfig": {
     "access": "public"
@@ -29,6 +40,10 @@
     }
   },
   "files": [
+    "dist",
     "src"
-  ]
+  ],
+  "dependencies": {
+    "lint-staged": "^11.2.3"
+  }
 }

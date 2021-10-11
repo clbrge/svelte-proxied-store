@@ -1,11 +1,10 @@
-
 const subscriberQueue = []
 
-function noop () { }
+function noop () {}
 
 const defaultHandler = {
-  get: function(internal, prop) {
-    return Reflect.get(internal, prop)
+  get: function (internal, property) {
+    return Reflect.get(internal, property)
   }
 }
 
@@ -14,17 +13,23 @@ function proxied (handler = defaultHandler) {
   const internal = {}
   const proxy = new Proxy(internal, handler)
   const subscribers = []
-  function get (prop) {
-    return internal[prop]
-  }
-  function set (prop, value) {
-    internal[prop] = value
+  function get (property) {
+    return Reflect.get(internal, property)
   }
   function assign (object) {
     Object.assign(internal, object)
   }
-  function refresh () {
-    if (active) { // store is active
+  function _delete (property) {
+    Reflect.deleteProperty(internal, property)
+  }
+  function deleteAll () {
+    for (const property of Object.getOwnPropertyNames(internal)) {
+      Reflect.deleteProperty(internal, property)
+    }
+  }
+  function emit () {
+    if (active) {
+      // store is active
       const runQueue = !subscriberQueue.length
       for (let i = 0; i < subscribers.length; i += 1) {
         const s = subscribers[i]
@@ -56,7 +61,7 @@ function proxied (handler = defaultHandler) {
       }
     }
   }
-  return { refresh, set, get, assign, subscribe }
+  return { get, assign, delete: _delete, deleteAll, emit, subscribe }
 }
 
 export { proxied }
