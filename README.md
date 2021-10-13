@@ -4,19 +4,27 @@
 A fork of svelte-store that specialize in handling Javascript Object.
 
 A proxied Store implement the `subscribe` method that is fully
-compatible with the original Svelte store (in particular, the auto
-subscriptions using the `$` notation in Svelte files).
+compatible with the original Svelte store. Thus the auto subscription
+using the `$` notation in Svelte files will behave as expected. Also,
+you may use one or more proxied Store as argument to create standard
+derived Svelte stores.
 
-There are a few differences:
+But there are major differences:
 
-1. The store are writable but not using the classic `set` or `update`
-functions. Instead, you can update properties' value of the stored
-Object using `assign` (works like `Object.assign`).
+1. A proxied store state can only be a Javascript Object, i.e. a
+collection of properties, not a primitive value (Boolean, Null,
+Undefined, Number, String).
 
-2. Subscribers only receive new values when you explicitely call
-`emit`, not automatically after `assign`.
+2. A proxied store is writable but not using the classic `set` or
+`update` functions. Instead, you can only update one or more of the
+properties' values using `assign`. The Object itself never changes,
+only its properties.
 
-3. The store use [JavaScript
+3. All of a proxied store's active subscription functions are called
+whenever when you explicitely call `emit`, not automatically after
+`assign`.
+
+4. The store use [JavaScript
 Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
 internally and you can pass a custom handler to intercept and redefine
 fundamental operations for the stored Object. This allow some powerful
@@ -34,8 +42,9 @@ npm i svelte-proxied-store
 ### Simple Usage
 
 
-Import and declare like a normal Svelte store except that you cannot
-initialize with a value, it's always an empty JavaScript Object.
+Import and declare it like a normal Svelte store, except that you
+cannot initialize it with a value, it's always an empty JavaScript
+Object.
 
 ```js
 const { proxied } = require ('svelte-proxied-store')
@@ -43,11 +52,12 @@ const { proxied } = require ('svelte-proxied-store')
 const myStore = proxied()
 ```
 
-A proxied store implement 6 methods `subscribe`, `assign`, `emit`,
-`get`, `delete` and `deleteAll`. Only is strictly equivalent to
-standard svelte store.
+A proxied store implement 6 methods: `subscribe`, `assign`, `emit`,
+`get`, `delete` and `deleteAll`. Only `subscribe` works identically
+like with a standard Svelte store.
 
-The stored Object properties can be assigned new values using `assign` :
+The stored Object properties can be assigned new values using `assign`
+(works like `Object.assign`):
 
 ```js
 myStore.assign({
@@ -87,7 +97,8 @@ myStore.get('propertyKey')
 
 ### Advanced Usage
 
-You declare a store using a custom Proxy handler to allow advanced usage :
+You may create a proxied store using a custom Proxy handler to allow
+advanced usage :
 
 ```js
 const { proxied } = require ('svelte-proxied-store')
