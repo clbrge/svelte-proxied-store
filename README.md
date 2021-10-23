@@ -66,11 +66,12 @@ myStore.assign({
 })
 ```
 
-You may delete a property from the stored Object using `delete` :
+You may delete a property from the stored Object using `delete`:
 
 ```js
 myStore.delete('propertyName')
 ```
+
 
 Or remove all properties using `deleteAll` :
 
@@ -87,7 +88,7 @@ changes to subscribers:
 myStore.emit()
 ```
 
-4. Finally, you can access at any time the internal value of any
+Finally, you may access at any time the internal value of any
 property of the stored Object (it won't be handled by the Proxy
 Hanlder, contrary to `$myStore.propertyKey`)
 
@@ -115,7 +116,7 @@ const myStore = proxied(handler)
 The handler above will intercept any `get` call from subscribers
 (including when you use the notation `$myStore.propertyKey`).
 
-This is opportunity to implement any logic you like before sending
+This is an opportunity to implement any logic you like before sending
 back the internal value (of any other value preferable).
 
 

@@ -14,8 +14,6 @@ describe('store', () => {
 	  count.assign({v: 0});
 	  count.emit();
 
-	  count.delete('v')
-
 	  count.assign({v: 1});
 	  count.emit();
 
@@ -24,6 +22,44 @@ describe('store', () => {
 	  count.assign({v: 2});
 
 	  assert.deepEqual(values, [0, 1]);
+	});
+
+	it('delete property a proxied store', () => {
+	  const count = proxied();
+	  const values = [];
+
+	  const unsubscribe = count.subscribe(o => {
+		if (o.v !== undefined) values.push(o.v);
+	  });
+
+	  count.assign({v: 0});
+	  count.emit();
+
+	  count.delete('v');
+	  count.emit();
+
+	  unsubscribe();
+
+	  assert.deepEqual(values, [0]);
+	});
+
+	it('destructure proxied store', () => {
+	  const { delete: deleteProperty, subscribe, assign, emit } = proxied();
+	  const values = [];
+
+	  const unsubscribe = subscribe(o => {
+		if (o.v !== undefined) values.push(o.v);
+	  })
+
+	  assign({v: 0});
+	  emit();
+
+	  deleteProperty('v');
+	  emit();
+
+	  unsubscribe()
+
+	  assert.deepEqual(values, [0]);
 	});
 
 	it('creates an empty proxied store', () => {

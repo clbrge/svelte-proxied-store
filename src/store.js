@@ -19,7 +19,7 @@ function proxied (handler = defaultHandler) {
   function assign (object) {
     Object.assign(internal, object)
   }
-  function _delete (property) {
+  function deleteProperty (property) {
     Reflect.deleteProperty(internal, property)
   }
   function deleteAll () {
@@ -61,7 +61,7 @@ function proxied (handler = defaultHandler) {
       }
     }
   }
-  return { get, assign, delete: _delete, deleteAll, emit, subscribe }
+  return { get, assign, delete: deleteProperty, deleteAll, deleteProperty, emit, subscribe }
 }
 
 export { proxied }
