@@ -43,6 +43,21 @@ describe('store', () => {
 	  assert.deepEqual(values, [0]);
 	});
 
+	it('emit argument has been assigned', () => {
+	  const count = proxied();
+	  const values = [];
+
+	  const unsubscribe = count.subscribe(o => {
+		if (o.v !== undefined) values.push(o.v);
+	  });
+
+	  count.emit({v: 'x'});
+
+	  unsubscribe();
+
+	  assert.deepEqual(values, ['x']);
+	});
+
 	it('destructure proxied store', () => {
 	  const { delete: deleteProperty, subscribe, assign, emit } = proxied();
 	  const values = [];

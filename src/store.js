@@ -27,7 +27,8 @@ function proxied (handler = defaultHandler) {
       Reflect.deleteProperty(internal, property)
     }
   }
-  function emit () {
+  function emit (object) {
+    if (object) assign(object)
     if (active) {
       // store is active
       const runQueue = !subscriberQueue.length
@@ -61,7 +62,15 @@ function proxied (handler = defaultHandler) {
       }
     }
   }
-  return { get, assign, delete: deleteProperty, deleteAll, deleteProperty, emit, subscribe }
+  return {
+    get,
+    assign,
+    delete: deleteProperty,
+    deleteAll,
+    deleteProperty,
+    emit,
+    subscribe
+  }
 }
 
 export { proxied }
