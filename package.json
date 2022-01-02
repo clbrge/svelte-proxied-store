@@ -11,6 +11,7 @@
   "main": "./dist/store.umd.js",
   "module": "./dist/store.es.js",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "import": "./dist/store.es.js",
       "require": "./dist/store.umd.js"
