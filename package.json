@@ -1,6 +1,6 @@
 {
   "name": "svelte-proxied-store",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "license": "MIT",
   "description": "svelte store for Object using Proxy to allow cybernetically enhanced magic.",
   "repository": "gitlab:clb1/svelte-proxied-store",
