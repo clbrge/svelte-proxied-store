@@ -8,6 +8,7 @@
     "name": "Christophe Le Bars",
     "email": "<clb@toort.net>"
   },
+  "type": "module",
   "main": "./dist/store.umd.js",
   "module": "./dist/store.mjs",
   "exports": {
@@ -20,7 +21,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "prettier-standard --lint '{test,src}/**/*.js'",
-    "test": "mocha --require @babel/register",
+    "test": "mocha",
     "build": "npm run clean && rollup -c"
   },
   "keywords": [
@@ -28,16 +29,13 @@
     "store"
   ],
   "devDependencies": {
-    "@babel/preset-env": "^7.20.2",
-    "@babel/register": "^7.18.9",
-    "rollup": "^2.75.5",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-dts": "^4.2.2",
+    "rollup": "^3.20.2",
+    "rollup-plugin-dts": "^5.3.0",
     "assert": "^2.0.0",
-    "lint-staged": "^13.1.0",
-    "mocha": "^10.1.0",
+    "lint-staged": "^13.2.1",
+    "mocha": "^10.2.0",
     "prettier-standard": "^16.4.1",
-    "release-it": "^15.5.1"
+    "release-it": "^15.10.1"
   },
   "lint-staged": {
     "*": [

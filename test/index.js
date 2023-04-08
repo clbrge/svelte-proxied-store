@@ -1,5 +1,5 @@
 import * as assert from 'assert'
-import { proxied } from '../src/store'
+import { proxied } from '../src/store.js'
 
 describe('store', () => {
   describe('proxied', () => {
