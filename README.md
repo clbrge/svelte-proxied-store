@@ -164,14 +164,25 @@ Remember that using a custom handler is optional, and you can still use the prox
 
 ## Examples
 
-If you have other powerful examples or use cases of proxied stores, let us know! We'd love to see how you're using it to enhance your applications.
+In the examples section, we will explore four practical and powerful use cases of `svelte-proxied-store` to demonstrate its capabilities in handling a variety of situations. These examples showcase different aspects of `svelte-proxied-store` and illustrate how it can be used to create and manage complex store structures effectively.
 
+1. *Key/Values Stores*: This example demonstrates how to create a simple key-value store using `svelte-proxied-store`. This type of store allows you to easily manage and access data based on keys, offering a flexible and efficient way to store and retrieve information.
+
+2. *Store with Contextual Properties Values*: In this example, we explore how to create a store with contextual property values, which allows for dynamic and context-specific data access. By using `svelte-proxied-store`, you can create stores that adapt their values based on the current context, making them more versatile and powerful.
+
+3. *Cache Systems*: This example showcases how to implement a cache system using `svelte-proxied-store`. Cache systems are essential for improving the performance of data-intensive applications, and with `svelte-proxied-store`, you can create efficient cache systems that are easy to manage and maintain.
+
+4. *`svelte-ethers-store`*: In this advanced example, we examine the `svelte-ethers-store` package, which leverages the power of `svelte-proxied-store` to create a flexible and powerful interface for interacting with Ethereum smart contracts and the Ethereum network. This example demonstrates how Proxy features can be used to create dynamic sub-stores, access control, lazy initialization, and custom subscription handling.
+
+By exploring these examples, you will gain a deeper understanding of how `svelte-proxied-store` can be employed in various scenarios to enhance your Svelte applications.
+
+If you have other powerful examples or use cases of proxied stores, let us know! We'd love to see how you're using it to enhance your applications.
 
 
 ### key/values stores
 
-When stores are used to keep tracks of a collections of keys/values, a common pattern is 
-to update and delete keys could be:
+In situations where stores are used to manage a collection of key-value pairs, a common pattern for updating and deleting keys might look like this:
+
 
 ```js
 import { writable } from 'svelte/store'
@@ -201,8 +212,7 @@ standardSvelteStore.update(state => {
 })
 ```
 
-This pattern works but proxied stores are handling this type of
-scenario is a much more concise and natural way:
+While this pattern works, proxied stores offer a more concise and intuitive approach to handle such scenarios:
 
 ```js
 import { proxied } from 'svelte-proxied-store'
@@ -226,20 +236,14 @@ myProxiedStore.emit({
 myProxiedStore.deleteProperty('key2')
 ```
 
-Direct access to deep values using the syntax
-`myProxiedStore.get('propertyName')` also opens up less convoluted
-code to access the current state for key/values stores.
+The proxied store also provides direct access to deep values using the syntax `myProxiedStore.get('propertyName')`, which allows for more straightforward and less convoluted code when accessing the current state of key-value stores. This approach simplifies the management of key-value pairs in your Svelte applications, making it easier to maintain and update the state.
 
 
 ### Store with contextual properties values
 
-Being able to use a Proxy handler to determine the state depending on
-some context potentially using any kind of libraries or specific code
-to compute that value opens new usage of proxied stores.
+Utilizing a Proxy handler to determine the state based on context can open up new use cases for proxied stores. This approach allows you to integrate various libraries or custom code to compute values dynamically.
 
-This example below implemented a simple translation engine (using
-internally the `i18next` library) to translate automatically across
-you application when a language context is globally changed:
+The example below demonstrates a simple translation engine that leverages the `i18next` library. This engine automatically translates content throughout your application when a global language context is changed:
 
 ```js
 // ./lang.js file
@@ -266,7 +270,7 @@ export const changeLocale = async locale => {
 }
 ```
 
-Usage in your Svelte files:
+You can then use this store in your Svelte files to automatically display translated content based on the current language context:
 
 ```html
 <script>
@@ -276,12 +280,11 @@ Usage in your Svelte files:
     <a href="/faq">{$_['FAQ']}</a>
 ```
 
+This approach showcases the flexibility of proxied stores in handling dynamic and context-dependent values, which can be particularly useful for applications that require internationalization or other context-aware features.
+
 ### Cache systems
 
-You can also use a proxy handler to automatically and transparently
-load values when a Svelte page in your application subscribe to a
-particular property (for example using the `$` prefix Svelte
-notation):
+Proxied stores can be used to automatically and transparently load values when a Svelte page in your application subscribes to a particular property (for example, using the `$` prefix Svelte notation). This approach is ideal for creating simple or complex cache systems where data is loaded only when requested by a page and never requested a second time.
 
 ```html
 <script>
@@ -296,14 +299,8 @@ notation):
 {/each}
 ```
 
-This is ideal to create simple or complex cache system where data is
-loaded only when requested by a page (that is to say, when the
-property is accessed) in your application and never requested a second
-times.
 
-In the following code, the very simple cache system is implemented
-using proxied store, and asynchronously load the data for each `id` when
-they are not yet defined in the store:
+In the following code, a simple cache system is implemented using a proxied store. It asynchronously loads the data for each `id` when they are not yet defined in the store:
 
 ```js
 // ./cache.js file
@@ -350,10 +347,7 @@ const cache = cacheStore()
 export default cache
 ```
 
-Be very careful with this kind of advanced usage to have correct
-conditions in place to avoid an infinite loop (page subscribe to
-property 'x' -> proxy call the loading data for 'x' -> emit() after
-load -> the proxy has no correct stop conditions, etc).
+When using this advanced approach, it is important to ensure that you have the correct conditions in place to avoid an infinite loop (e.g., page subscribes to property 'x' -> proxy calls the loading data for 'x' -> emit() after load -> the proxy has no correct stop conditions, and so on). With careful implementation, this strategy can be an effective way to optimize data loading in your application.
 
 
 ### svelte-ethers-store and svelte-web3
