@@ -2,8 +2,8 @@
   "name": "svelte-proxied-store",
   "version": "1.1.5",
   "license": "MIT",
-  "description": "svelte store for Object using Proxy to allow cybernetically enhanced magic.",
-  "repository": "gitlab:clb1/svelte-proxied-store",
+  "description": "Svelte store leveraging Proxy for advanced reactivity and seamless state management.",
+  "repository": "clbrge/svelte-proxied-store",
   "author": {
     "name": "Christophe Le Bars",
     "email": "<clb@toort.net>"
@@ -11,11 +11,13 @@
   "type": "module",
   "main": "./dist/store.umd.js",
   "module": "./dist/store.mjs",
+  "types": "dist/store.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "import": "./dist/store.mjs",
-      "require": "./dist/store.umd.js"
+      "require": "./dist/store.umd.js",
+      "types": "dist/store.d.ts"
     }
   },
   "scripts": {
@@ -46,7 +48,7 @@
     "access": "public"
   },
   "release-it": {
-    "gitlab": {
+    "github": {
       "release": true
     }
   },

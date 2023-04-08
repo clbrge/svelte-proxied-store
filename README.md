@@ -1,64 +1,61 @@
-
 # svelte-proxied-store
 
-A fork of
-[`svelte/store`](https://svelte.dev/docs#run-time-svelte-store) that
-specializes in handling Javascript Object.
+`svelte-proxied-store` is a fork of [`svelte/store`](https://svelte.dev/docs#run-time-svelte-store) with a focus on handling JavaScript Objects more effectively. It retains compatibility with the original Svelte store through the `subscribe` method, ensuring that auto-subscription using the `$` notation in Svelte files works as expected.
 
-A proxied Store implements the `subscribe` method that is fully
-compatible with the original Svelte store. Thus the auto subscription
-using the `$` notation in Svelte files behaves as expected.
+However, there are some key differences between `svelte-proxied-store` and the standard Svelte store:
 
-But there are four major differences:
+1. **Object-only state**: A proxied store's state can only be a [JavaScript Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object), consisting of a collection of properties. JavaScript primitive values (Boolean, Null, Undefined, Number, String) are not allowed. The state Object is created automatically at store initialization without any properties.
 
-1. A proxied store state can only be a [Javascript
-Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object),
-i.e. a collection of properties, not a Javascript primitive value
-(Boolean, Null, Undefined, Number, String). The state Object is
-created automatically at store initialization with no properties.
+2. **Writable with `assign`**: While a proxied store is writable, it does not use the standard Svelte store `set` or `update` methods. Instead, you can only update one or more of its state properties' values using `assign`. The Object itself never changes, only its properties and values.
 
-2. A proxied store is writable but not using the standard Svelte store
-`set` or `update` methods. Instead, you can only update one or more of
-its state properties' values using `assign`. The Object itself never
-changes, only its properties and values.
+3. **Explicit `emit` calls**: In a proxied store, all active subscription functions are called only when you explicitly call `emit`, not automatically after updates (for example, using the `assign` method).
 
-3. All of a proxied store's active subscription functions are called
-only when you explicitly call `emit`, and not automatically after
-updates (for example using the `assign` method).
+4. **JavaScript Proxy for advanced use cases**: The store utilizes [JavaScript Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) internally, allowing you to pass a custom handler to intercept and redefine fundamental operations for the stored state Object. This enables powerful and advanced use cases (examples below).
 
-4. The store use [JavaScript
-Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
-internally and you can pass a custom handler to intercept and redefine
-fundamental operations for the stored state Object. This allow some
-powerful magic (examples below).
+## Advantages of the Proxy approach
+
+For developers unfamiliar with JavaScript Proxy, it may seem like an unnecessary complication. However, it brings some significant advantages that can improve your application's performance and flexibility:
+
+- **Optimized updates**: By using `assign` to update individual properties, you avoid the need to create new objects for every state update. This can reduce memory usage and improve performance.
+
+- **Fine-grained control**: The Proxy-based approach allows you to have more control over when subscriptions are updated. By explicitly calling `emit`, you can batch multiple updates together and minimize the number of updates sent to subscribers.
+
+- **Extendable behavior**: The custom handler feature enables powerful enhancements to the stored state Object. You can intercept and redefine fundamental operations, allowing for advanced use cases such as validation, logging, or computed properties.
+
+Even if you don't need the advanced features provided by the custom handler, `svelte-proxied-store` can still be an efficient and convenient way to manage your application's state when working with JavaScript Objects.
 
 
 ## Installation
 
-Add the `svelte-proxied-store` package
+To install `svelte-proxied-store`, follow these simple steps:
+
+1. Add the `svelte-proxied-store` package to your project:
 
 ```bash
-npm i svelte-proxied-store
+npm install svelte-proxied-store
 ```
+
+2. Import  `svelte-proxied-store` in your Svelte components or JavaScript files:
+
+```js
+import { proxied } from 'svelte-proxied-store';
+```
+
+Start using `svelte-proxied-store` in your application by creating and managing proxied stores as needed.
+
 
 ### Simple Usage
 
-Import and declare it like a normal Svelte store, except that you
-cannot initialize it with a value, it's always an empty JavaScript
-Object.
+To use `svelte-proxied-store`, first import and create a proxied store. Note that unlike a standard Svelte store, you cannot initialize it with a value; it always starts as an empty JavaScript Object.
 
 ```js
-import { proxied } from 'svelte-proxied-store'
-
 const myStore = proxied()
 ```
 
-A proxied store implements 6 methods: `subscribe`, `assign`, `emit`,
-`get`, `delete` and `deleteAll`. Only `subscribe` works exactly like
-the one of a standard Svelte store.
+A proxied store provides 6 methods: `subscribe`, `assign`, `emit`,
+`get`, `delete` and `deleteAll`. The `subscribe` method works exactly like a standard Svelte store.
 
-The stored Object properties can be assigned new values using `assign`
-(it works like `Object.assign`):
+To assign new values to the stored Object properties, use the `assign` method (which works similarly to `Object.assign`):
 
 ```js
 myStore.assign({
@@ -67,29 +64,26 @@ myStore.assign({
 })
 ```
 
-You may delete a property from the stored Object using `delete`:
+To delete a property from the stored Object, use the `delete` method:
 
 ```js
 myStore.delete('<propertyName>')
 ```
 
-Or remove all properties using `deleteAll` :
+To remove all properties from the stored Object, use the `deleteAll` method:
 
 ```js
 myStore.deleteAll()
 ```
 
-Contrary to normal Svelte stores, notification of changes to
-subscribers doesn't happen automatically when you `assign` new
-property values or `delete` them. You need to explicitly use `emit` to
-broadcast your changes to subscribers:
+Unlike standard Svelte stores, changes to subscribers are not automatically notified when you `assign` new property values or `delete` them. To broadcast changes to subscribers, you must explicitly use the `emit` method:
+
 
 ```js
 myStore.emit()
 ```
 
-As a syntactic sugar, if you pass an Object as argument to `emit`, that
-argument is first send to `assign` before the broadcast:
+As a convenient shortcut, if you pass an Object as an argument to `emit`, it will first be sent to `assign` before broadcasting the changes:
 
 ```js
 myStore.emit({
@@ -98,24 +92,52 @@ myStore.emit({
 })
 ```
 
-Finally, you may access at any time the internal value of any property
-of the stored state Object (This direct property's value access will
-bypass the Proxy Handler, contrary to using accessors like
-`$myStore.propertyName`)
+Finally, you can access the internal value of any property in the stored state Object at any time using the `get` method. Note that this direct property value access will bypass the Proxy Handler, unlike using accessors like $myStore.propertyName.
 
 ```js
 myStore.get('<propertyName>')
 ```
 
+This approach with `svelte-proxied-store` allows for more precise control over state updates and provides additional flexibility when working with complex data structures or operations. Even without utilizing a custom Proxy Handler, the proxied store can still be beneficial for managing application state.
+
 ### Derived stores with proxied stores
 
-You can use proxied stores to create standard derived stores. You can also
-combined several stores writable or proxied to build complex derived stores.
+Proxied stores can be used to create derived stores, just like standard Svelte stores. You can combine multiple writable or proxied stores to build complex derived stores.
+Creating Derived Stores from Proxied Stores
+
+To create a derived store from a proxied store, use the `derived` function from the Svelte store module. The derived store will automatically update whenever any of its source stores emit changes.
+
+Here's an example that demonstrates creating a derived store from two proxied stores:
+
+```js
+import { derived } from 'svelte/store'
+import { proxied } from 'svelte-proxied-store'
+
+const identity = proxied()
+const job = proxied()
+
+identity.assign({ firstname: 'John', lastname: 'Doe' })
+job.assign({ state: 'running', id: 'xyz' })
+
+const status = derived(
+  [identity, job],
+  ([$identity, $job]) => `${$identity.firstname} ${$identity.lastName}'s job is ${$job.state}`
+)
+
+// Usage in a Svelte component
+/*
+<script>
+  import { status } from './stores.js'
+</script>
+
+<p>Status: {$status}</p>
+*/
+```
+
 
 ### Advanced Usage
 
-You may create a proxied store using a custom Proxy handler to allow
-advanced usage :
+You can create a proxied store with a custom Proxy handler for more advanced use cases:
 
 ```js
 import { proxied } from 'svelte-proxied-store'
@@ -129,17 +151,21 @@ const handler = {
 const myStore = proxied(handler)
 ```
 
-The handler above intercepts any `get` call from subscribers
-(including when you use the notation `$myStore.propertyName`).
 
-This is an opportunity to implement any logic you like before sending
-back the internal value (of any other value preferable).
+The custom handler above intercepts any `get` call from subscribers (including when you use the notation `$myStore.propertyName`). This provides an opportunity to implement custom logic before returning the internal value or any other desired value.
 
+For example, with the custom handler in the code snippet, when a subscriber accesses a property, the value is automatically doubled before being returned. This can be useful for scenarios where you need to perform some transformations on the data before providing it to subscribers.
+
+Keep in mind that the custom handler can be as simple or as complex as needed, giving you the flexibility to control how the internal state is accessed or modified.
+
+To fully understand and leverage the power of custom Proxy handlers, familiarize yourself with the Proxy API and its various traps for handling different operations.
+
+Remember that using a custom handler is optional, and you can still use the proxied store without one for simpler use cases.
 
 ## Examples
 
+If you have other powerful examples or use cases of proxied stores, let us know! We'd love to see how you're using it to enhance your applications.
 
-If you have power example usages of proxied stores, let us know!
 
 
 ### key/values stores
@@ -328,3 +354,22 @@ Be very careful with this kind of advanced usage to have correct
 conditions in place to avoid an infinite loop (page subscribe to
 property 'x' -> proxy call the loading data for 'x' -> emit() after
 load -> the proxy has no correct stop conditions, etc).
+
+
+### svelte-ethers-store and svelte-web3
+
+The [svelte-ethers-store](https://www.npmjs.com/package/svelte-ethers-store) package demonstrates another advanced usage of the `svelte-proxied-store`. By leveraging the Proxy feature, it can provide a more powerful and flexible interface to interact with Ethereum smart contracts and the Ethereum network.
+
+The package has several advanced usages of Proxies:
+
+1. Dynamic sub-stores: By using a Proxy for the `makeEvmStores` function, the package creates and manages sub-stores dynamically based on the input name. This allows for creating multiple EVM store instances while sharing the same interface.
+
+2. Access control and validation: The Proxy traps in `makeEvmStores` help control access to properties and methods, ensuring that only valid store properties are accessed. This improves the robustness of the code by providing a clear and controlled interface.
+
+3. Lazy initialization of contract instances: The derived store for `contracts` is responsible for creating contract instances only when the EVM store is connected. By using a Proxy, the package can efficiently manage the state and initialization of contract instances, ensuring optimal resource usage.
+
+4. Custom subscription handling: The package forces a subscription on the `$contracts` store, ensuring that it's always defined via the Proxy. This helps maintain the correct state and behavior across different components.
+
+[svelte-web3](https://www.npmjs.com/package/svelte-web3) use similar advanced capabilities of the svelte-proxied-store package by utilizing Proxy features to provide a powerful and flexible interface for a different Ethereum lib.
+
+
