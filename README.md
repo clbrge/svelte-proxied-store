@@ -120,7 +120,7 @@ advanced usage :
 ```js
 import { proxied } from 'svelte-proxied-store'
 
-const handler = 
+const handler = {
   get: function(internal, property, receiver) {
     return internal.prop * 2
   }
@@ -259,6 +259,7 @@ notation):
 
 ```html
 <script>
+  import ComponentX from './ComponentX.svelte'
   import cache from './cache.js'
 </script>
 
