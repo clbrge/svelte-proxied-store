@@ -141,4 +141,46 @@ describe('store', () => {
       unsubscribe()
     })
   })
+
+  describe('error handling', () => {
+    it('throws an error when get is called with a non-string argument', () => {
+      const store = proxied()
+      assert.throws(() => store.get(42), {
+        message: 'get: property must be a string'
+      })
+    })
+
+    it('throws an error when assign is called with a non-object or null argument', () => {
+      const store = proxied()
+      assert.throws(() => store.assign(null), {
+        message: 'assign: object must be a non-null object'
+      })
+      assert.throws(() => store.assign(42), {
+        message: 'assign: object must be a non-null object'
+      })
+    })
+
+    it('throws an error when deleteProperty is called with a non-string argument', () => {
+      const store = proxied()
+      assert.throws(() => store.deleteProperty(42), {
+        message: 'deleteProperty: property must be a string'
+      })
+    })
+
+    it('throws an error when subscribe is called with a non-function run argument', () => {
+      const store = proxied()
+      assert.throws(() => store.subscribe(42), {
+        message: 'subscribe: run must be a function'
+      })
+    })
+
+    it('throws an error when subscribe is called with a non-function invalidate argument', () => {
+      const store = proxied()
+      assert.throws(() => store.subscribe(() => {}, 42), {
+        message: 'subscribe: invalidate must be a function or not provided'
+      })
+    })
+  })
+
+
 })
