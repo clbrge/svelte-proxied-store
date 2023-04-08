@@ -172,7 +172,7 @@ In the examples section, we will explore four practical and powerful use cases o
 
 3. *Cache Systems*: This example showcases how to implement a cache system using `svelte-proxied-store`. Cache systems are essential for improving the performance of data-intensive applications, and with `svelte-proxied-store`, you can create efficient cache systems that are easy to manage and maintain.
 
-4. *`svelte-ethers-store`*: In this advanced example, we examine the `svelte-ethers-store` package, which leverages the power of `svelte-proxied-store` to create a flexible and powerful interface for interacting with Ethereum smart contracts and the Ethereum network. This example demonstrates how Proxy features can be used to create dynamic sub-stores, access control, lazy initialization, and custom subscription handling.
+4. *`ethers-svelte`*: In this advanced example, we examine the `ethers-svelte` package, which leverages the power of `svelte-proxied-store` to create a flexible and powerful interface for interacting with Ethereum smart contracts and the Ethereum network. This example demonstrates how Proxy features can be used to create dynamic sub-stores, access control, lazy initialization, and custom subscription handling.
 
 By exploring these examples, you will gain a deeper understanding of how `svelte-proxied-store` can be employed in various scenarios to enhance your Svelte applications.
 
@@ -350,11 +350,11 @@ export default cache
 When using this advanced approach, it is important to ensure that you have the correct conditions in place to avoid an infinite loop (e.g., page subscribes to property 'x' -> proxy calls the loading data for 'x' -> emit() after load -> the proxy has no correct stop conditions, and so on). With careful implementation, this strategy can be an effective way to optimize data loading in your application.
 
 
-### svelte-ethers-store and svelte-web3
+### ethers-svelte and svelte-web3
 
-The [svelte-ethers-store](https://www.npmjs.com/package/svelte-ethers-store) package demonstrates another advanced usage of the `svelte-proxied-store`. By leveraging the Proxy feature, it can provide a more powerful and flexible interface to interact with Ethereum smart contracts and the Ethereum network.
+The [ethers-svelte](https://www.npmjs.com/package/ethers-svelte) package demonstrates another advanced usage of the `svelte-proxied-store`. By leveraging the Proxy feature, it can provide a more powerful and flexible interface to interact with Ethereum smart contracts and the Ethereum network.
 
-The package has several advanced usages of Proxies:
+The package [has several advanced usages](https://github.com/clbrge/ethers-svelte/blob/main/src/stores.js) of Proxies and `svelte-proxied-store`:
 
 1. Dynamic sub-stores: By using a Proxy for the `makeEvmStores` function, the package creates and manages sub-stores dynamically based on the input name. This allows for creating multiple EVM store instances while sharing the same interface.
 
@@ -364,6 +364,6 @@ The package has several advanced usages of Proxies:
 
 4. Custom subscription handling: The package forces a subscription on the `$contracts` store, ensuring that it's always defined via the Proxy. This helps maintain the correct state and behavior across different components.
 
-[svelte-web3](https://www.npmjs.com/package/svelte-web3) use similar advanced capabilities of the svelte-proxied-store package by utilizing Proxy features to provide a powerful and flexible interface for a different Ethereum lib.
+[svelte-web3](https://www.npmjs.com/package/svelte-web3) use similar advanced capabilities of the `svelte-proxied-store` package by utilizing Proxy features to provide a powerful and flexible interface for a different Ethereum lib.
 
 
