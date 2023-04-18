@@ -9,14 +9,14 @@
     "email": "<clb@toort.net>"
   },
   "type": "module",
-  "main": "./dist/store.umd.js",
+  "main": "./dist/store.umd.cjs",
   "module": "./dist/store.mjs",
   "types": "dist/store.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "import": "./dist/store.mjs",
-      "require": "./dist/store.umd.js",
+      "require": "./dist/store.umd.cjs",
       "types": "dist/store.d.ts"
     }
   },
