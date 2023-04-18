@@ -1,6 +1,6 @@
 {
   "name": "svelte-proxied-store",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "license": "MIT",
   "description": "Svelte store leveraging Proxy for advanced reactivity and seamless state management.",
   "repository": "clbrge/svelte-proxied-store",
