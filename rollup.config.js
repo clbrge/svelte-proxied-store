@@ -5,7 +5,7 @@ export default [
     input: "./src/store.js",
     output: [
       { file: "dist/store.mjs", format: "es" },
-      { file: "dist/store.umd.cjs", format: "umd", name: "svelte-proxied-store" },
+      { file: "dist/store.umd.js", format: "umd", name: "svelte-proxied-store" },
     ]
   },
   {
